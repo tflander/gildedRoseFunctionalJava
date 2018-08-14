@@ -1,5 +1,7 @@
 package com.gildedrose;
 
+import java.util.function.Function;
+
 class GildedRose {
     Item[] items;
 
@@ -8,63 +10,83 @@ class GildedRose {
     }
 
     public void updateQuality() {
+
         for (int i = 0; i < items.length; i++) {
-            adjustQuality(i);
-            adjustSellIn(i);
+
+            Function<Item, Item> adjustQuality = adjustQuality();
+            Function<Item, Item> adjustSellIn = adjustSellIn();
+            Function<Item, Item> adjustQualityForExpiredItem = Function.identity();
+
+            items[i] = adjustQuality.apply(items[i]);
+            items[i] = adjustSellIn.apply(items[i]);
             if (items[i].sellIn < 0) {
-                adjustQualityForExpiredItem(i);
+                adjustQualityForExpiredItem = adjustQualityForExpiredItem();
             }
+            items[i] = adjustQualityForExpiredItem.apply(items[i]);
 
         }
     }
 
-    private void adjustQuality(int i) {
-        if (isLegendary(i)) {
-            return;
-        }
+    private Function<Item, Item> adjustQuality() {
+        return item -> {
+            if (isLegendary(item)) {
+                return item;
+            }
 
-        if (isItemThatIncreasesInQuality(items[i])) {
-            if (items[i].quality >= 50) {
-                return;
-            }
-            items[i] = items[i].builder().withQuality(items[i].quality + 1).build();
+            Item newItem = item;
 
-            if (items[i].name.equals("Backstage passes to a TAFKAL80ETC concert")) {
-                items[i] = handleQualityForBackstagePass(items[i]);
-            }
-        } else {
-            if (items[i].quality <= 0) {
-                return;
-            }
-            items[i] = items[i].builder().withQuality(items[i].quality - 1).build();
-            if (items[i].name.equals("Conjured")) {
-                items[i] = items[i].builder().withQuality(items[i].quality - 1).build();
-            }
-        }
-    }
+            if (isItemThatIncreasesInQuality(item)) {
+                if (newItem.quality >= 50) {
+                    return item;
+                }
+                newItem = newItem.builder().withQuality(newItem.quality + 1).build();
 
-    private void adjustSellIn(int i) {
-        if (!isLegendary(i)) {
-            items[i] = items[i].builder().withSellIn(items[i].sellIn - 1).build();
-        }
-    }
-
-    private void adjustQualityForExpiredItem(int i) {
-        if (items[i].name.equals("Aged Brie")) {
-            if (items[i].quality < 50) {
-                items[i] = items[i].builder().withQuality(items[i].quality + 1).build();
-            }
-        } else {
-            if (items[i].name.equals("Backstage passes to a TAFKAL80ETC concert")) {
-                items[i] = items[i].builder().withQuality(0).build();
+                if (newItem.name.equals("Backstage passes to a TAFKAL80ETC concert")) {
+                    newItem = handleQualityForBackstagePass(newItem);
+                }
             } else {
-                if (items[i].quality > 0) {
-                    if (!isLegendary(i)) {
-                        items[i] = items[i].builder().withQuality(items[i].quality - 1).build();
+                if (newItem.quality <= 0) {
+                    return newItem;
+                }
+                newItem = newItem.builder().withQuality(newItem.quality - 1).build();
+                if (newItem.name.equals("Conjured")) {
+                    newItem = newItem.builder().withQuality(newItem.quality - 1).build();
+                }
+            }
+            return newItem;
+        };
+
+    }
+
+    private Function<Item, Item> adjustSellIn() {
+        return item -> {
+            if (!isLegendary(item)) {
+                return item.builder().withSellIn(item.sellIn - 1).build();
+            }
+            return item;
+        };
+    }
+
+    private Function<Item, Item> adjustQualityForExpiredItem() {
+        return item -> {
+            Item newItem = item;
+            if (newItem.name.equals("Aged Brie")) {
+                if (newItem.quality < 50) {
+                    newItem = newItem.builder().withQuality(newItem.quality + 1).build();
+                }
+            } else {
+                if (newItem.name.equals("Backstage passes to a TAFKAL80ETC concert")) {
+                    newItem = newItem.builder().withQuality(0).build();
+                } else {
+                    if (newItem.quality > 0) {
+                        if (!isLegendary(newItem)) {
+                            newItem = newItem.builder().withQuality(newItem.quality - 1).build();
+                        }
                     }
                 }
             }
-        }
+            return newItem;
+        };
     }
 
     private Item handleQualityForBackstagePass(Item item) {
@@ -83,8 +105,8 @@ class GildedRose {
         return newItem;
     }
 
-    private boolean isLegendary(int i) {
-        return items[i].name.equals("Sulfuras, Hand of Ragnaros");
+    private boolean isLegendary(Item item) {
+        return item.name.equals("Sulfuras, Hand of Ragnaros");
     }
 
     private boolean isItemThatIncreasesInQuality(Item item) {
