@@ -4,9 +4,7 @@ package com.gildedrose;
 public class Item {
 
     public final String name;
-
     public final int sellIn;
-
     public final int quality;
 
     public Item(String itemName, int sellIn, int quality) {
