@@ -15,9 +15,9 @@ class GildedRose {
 
         for (int i = 0; i < items.length; i++) {
             String itemName = items[i].name;
-            Function<Item, Item> composedFunction = functionBuilder.adjustQuality(itemName)
+            Function<Item, Item> composedFunction = functionBuilder.adjustQuality()
                     .andThen(functionBuilder.adjustSellIn(itemName)
-                            .andThen(functionBuilder.adjustQualityForExpiredItem(itemName)));
+                            .andThen(functionBuilder.adjustQualityForExpiredItem()));
 
             items[i] = composedFunction.apply(items[i]);
         }

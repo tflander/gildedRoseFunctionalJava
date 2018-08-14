@@ -8,13 +8,13 @@ import java.util.function.Predicate;
 
 public class FunctionBuilder {
 
-    public Function<Item, Item> adjustQuality(String itemName) {
+    public Function<Item, Item> adjustQuality() {
 
         Map<Predicate<Item>, Function<Item, Item>> conditionalTransforms = new LinkedHashMap<>();
-        conditionalTransforms.put(item -> isLegendary(item.name), Function.identity());
-        conditionalTransforms.put(item -> item.name.equals("Backstage passes to a TAFKAL80ETC concert"), handleQualityForBackstagePass());
+        conditionalTransforms.put(isLegendary(), Function.identity());
+        conditionalTransforms.put(isBackstagePass(), handleQualityForBackstagePass());
         conditionalTransforms.put(item -> isItemThatIncreasesInQuality(item.name), increaseQualityByOneToMax());
-        conditionalTransforms.put(item -> isConjured(item.name), decreaseQualityByAmountToZero(2));
+        conditionalTransforms.put(isConjured(), decreaseQualityByAmountToZero(2));
         conditionalTransforms.put(item -> true, decreaseQualityByAmountToZero(1));
         return firstMatchingTransform(conditionalTransforms);
     }
@@ -27,12 +27,12 @@ public class FunctionBuilder {
         return decrementSellIn();
     }
 
-    public Function<Item, Item> adjustQualityForExpiredItem(String itemName) {
+    public Function<Item, Item> adjustQualityForExpiredItem() {
 
         Map<Predicate<Item>, Function<Item, Item>> conditionalTransforms = new LinkedHashMap<>();
-        conditionalTransforms.put(item -> isLegendary(item.name) || item.sellIn >= 0, Function.identity());
-        conditionalTransforms.put(item -> item.name.equals("Backstage passes to a TAFKAL80ETC concert"), setQualityToZero());
-        conditionalTransforms.put(item -> item.name.equals("Aged Brie"), increaseQualityByOneToMax());
+        conditionalTransforms.put(isLegendary().or(isExpired().negate()), Function.identity());
+        conditionalTransforms.put(isBackstagePass(), setQualityToZero());
+        conditionalTransforms.put(isAgedBrie(), increaseQualityByOneToMax());
         conditionalTransforms.put(item -> true, decreaseQualityByAmountToZero(1));
         return firstMatchingTransform(conditionalTransforms);
     }
@@ -61,8 +61,36 @@ public class FunctionBuilder {
         };
     }
 
+    private Predicate<Item> isLegendary() {
+        return item -> isLegendary(item.name);
+    }
+
     private boolean isLegendary(String itemName) {
         return itemName.equals("Sulfuras, Hand of Ragnaros");
+    }
+
+    private Predicate<Item> isExpired() {
+        return item -> item.sellIn < 0;
+    }
+
+    private boolean isConjured(String itemName) {
+        return itemName.equals("Conjured");
+    }
+
+    private Predicate<Item> isConjured() {
+        return item -> isConjured(item.name);
+    }
+
+    private Predicate<Item> isBackstagePass() {
+        return item -> itemHasName(item, "Backstage passes to a TAFKAL80ETC concert");
+    }
+
+    private Predicate<Item> isAgedBrie() {
+        return item -> itemHasName(item, "Aged Brie");
+    }
+
+    private boolean itemHasName(Item item, String expectedName) {
+        return item.name.equals(expectedName);
     }
 
     private boolean isItemThatIncreasesInQuality(String itemName) {
@@ -84,10 +112,6 @@ public class FunctionBuilder {
             int quality = Math.max(0, item.quality - amount);
             return item.builder().withQuality(quality).build();
         };
-    }
-
-    private boolean isConjured(String itemName) {
-        return itemName.equals("Conjured");
     }
 
     private Function<Item, Item> increaseQualityByOneToMax() {
