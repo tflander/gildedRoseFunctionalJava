@@ -1,26 +1,28 @@
 package com.gildedrose;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 public class AgeItemFunctionBuilder {
 
-    public Function<Item, Item> build(Item item) {
-        if (item.name.equals("Sulfuras, Hand of Ragnaros")) {
-            return Function.identity();
-        } else if (item.name.equals("Aged Brie")) {
-            return increaseQualityByOneToMax().andThen(decrementSellIn());
-        } else if (item.name.equals("Backstage passes to a TAFKAL80ETC concert")) {
-            return handleQualityForBackstagePass().andThen(decrementSellIn());
-        } else if (item.name.equals("Conjured")) {
-            return decreaseQualityByAmountToZero(2).andThen(decrementSellIn());
-        } else {
-            return decreaseQualityByAmountToZero(1)
-                    .andThen(decrementSellIn())
-                    .andThen(decreaseQualityIfExpired());
-        }
+    private static final Map<String, Function<Item, Item>> ageFunctionsByItemName = new HashMap<>();
+    static {
+        ageFunctionsByItemName.put("Sulfuras, Hand of Ragnaros", Function.identity());
+        ageFunctionsByItemName.put("Aged Brie", increaseQualityByOneToMax().andThen(decrementSellIn()));
+        ageFunctionsByItemName.put("Backstage passes to a TAFKAL80ETC concert", handleQualityForBackstagePass().andThen(decrementSellIn()));
+        ageFunctionsByItemName.put("Conjured", decreaseQualityByAmountToZero(2).andThen(decrementSellIn()));
     }
 
-    private Function<Item, Item> decreaseQualityIfExpired() {
+    private static final Function<Item, Item> defaultAgeFunction = decreaseQualityByAmountToZero(1)
+            .andThen(decrementSellIn())
+            .andThen(decreaseQualityIfExpired());
+
+    public Function<Item, Item> build(Item item) {
+        return ageFunctionsByItemName.getOrDefault(item.name, defaultAgeFunction);
+    }
+
+    private static Function<Item, Item> decreaseQualityIfExpired() {
         return item -> {
             if (item.sellIn < 0) {
                 return decreaseQualityByAmountToZero(1).apply(item);
@@ -30,11 +32,11 @@ public class AgeItemFunctionBuilder {
         };
     }
 
-    private Function<Item, Item> decrementSellIn() {
+    private static Function<Item, Item> decrementSellIn() {
         return item -> item.builder().withSellIn(item.sellIn - 1).build();
     }
 
-    private Function<Item, Item> increaseQualityByOneToMax() {
+    private static Function<Item, Item> increaseQualityByOneToMax() {
         return item -> {
             if (item.quality >= 50) {
                 return item;
@@ -43,7 +45,7 @@ public class AgeItemFunctionBuilder {
         };
     }
 
-    private Function<Item, Item> handleQualityForBackstagePass() {
+    private static Function<Item, Item> handleQualityForBackstagePass() {
         return item -> {
             if (item.sellIn <= 0) {
                 return item.builder().withQuality(0).build();
@@ -67,7 +69,7 @@ public class AgeItemFunctionBuilder {
         };
     }
 
-    private Function<Item, Item> decreaseQualityByAmountToZero(int amount) {
+    private static Function<Item, Item> decreaseQualityByAmountToZero(int amount) {
         return item -> {
             if (item.quality <= 0) {
                 return item;
