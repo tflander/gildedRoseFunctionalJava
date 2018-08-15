@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.gildedrose.GildedRoseTest" tests="13" skipped="0" failures="0" errors="0" timestamp="2018-08-15T18:28:15" hostname="Todds-MacBook-Pro.local" time="0.051">
+  <properties/>
+  <testcase name="qualityIsNeverNegative" classname="com.gildedrose.GildedRoseTest" time="0.046"/>
+  <testcase name="backstagePassesIncreaseByOneWhen11DaysOrMore" classname="com.gildedrose.GildedRoseTest" time="0.0"/>
+  <testcase name="agedBrieIncreasesInQuality" classname="com.gildedrose.GildedRoseTest" time="0.0"/>
+  <testcase name="conjuredItemsDegradeByTwoDaily" classname="com.gildedrose.GildedRoseTest" time="0.0"/>
+  <testcase name="sellInAndQualityReduceByOnePerDay" classname="com.gildedrose.GildedRoseTest" time="0.0"/>
+  <testcase name="backstagePassesIncreaseByTwoWhen10Days" classname="com.gildedrose.GildedRoseTest" time="0.001"/>
+  <testcase name="backstagePassesIncreaseByTwoWhenSixToTenDays" classname="com.gildedrose.GildedRoseTest" time="0.0"/>
+  <testcase name="backstagePassesHaveNoValueAfterTheShow" classname="com.gildedrose.GildedRoseTest" time="0.0"/>
+  <testcase name="legendaryItemsDoNotHaveToBeSoldAndDoNotDecreaseInQuality" classname="com.gildedrose.GildedRoseTest" time="0.0"/>
+  <testcase name="backstagePassesIncreaseByThreeWhenFiveDays" classname="com.gildedrose.GildedRoseTest" time="0.0"/>
+  <testcase name="backstagePassesIncreaseByThreeWhenOneToFiveDays" classname="com.gildedrose.GildedRoseTest" time="0.0"/>
+  <testcase name="expiredItemsDegradeTwiceAsFast" classname="com.gildedrose.GildedRoseTest" time="0.0"/>
+  <testcase name="itemQualityIsNeverMoreThan50" classname="com.gildedrose.GildedRoseTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
