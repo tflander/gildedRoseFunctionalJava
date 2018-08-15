@@ -6,7 +6,7 @@ public class ItemWrapper {
 
     private final Item item;
     private final Function<Item, Item> getAgedItem;
-    private static final AgeItemFunctionBuilder AGE_ITEM_FUNCTION_BUILDER = new AgeItemFunctionBuilder();
+    private static final AgeItemFunctionFactory AGE_ITEM_FUNCTION_BUILDER = new AgeItemFunctionFactory();
 
     public ItemWrapper(Item item) {
         this.item = item;

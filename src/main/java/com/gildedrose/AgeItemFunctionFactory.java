@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-public class AgeItemFunctionBuilder {
+public class AgeItemFunctionFactory {
 
     private static final Map<String, Function<Item, Item>> ageFunctionsByItemName = new HashMap<>();
     static {
