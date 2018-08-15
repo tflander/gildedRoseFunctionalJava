@@ -17,8 +17,8 @@ public class ItemWrapper {
         return item;
     }
 
-    public Item age() {
-        return getAgedItem.apply(item);
+    public ItemWrapper age() {
+        return new ItemWrapper(getAgedItem.apply(item));
     }
 
 }
