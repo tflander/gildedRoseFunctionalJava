@@ -1,26 +1,36 @@
 package com.gildedrose;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 class GildedRose {
     private final FunctionBuilder functionBuilder;
-    Item[] items;
+    ItemWrapper[] items;
 
     public GildedRose(Item[] items) {
-        this.items = items;
+        this.items = Arrays.stream(items)
+                .map(item -> new ItemWrapper(item))
+                .collect(Collectors.toList())
+                .toArray(new ItemWrapper[0]);
         functionBuilder = new FunctionBuilder();
     }
 
     public void updateQuality() {
 
-        for (int i = 0; i < items.length; i++) {
-            String itemName = items[i].name;
-            Function<Item, Item> composedFunction = functionBuilder.adjustQuality()
-                    .andThen(functionBuilder.adjustSellIn(itemName)
-                            .andThen(functionBuilder.adjustQualityForExpiredItem()));
+        Function<Item, Item> composedFunction = functionBuilder.adjustQuality()
+                .andThen(functionBuilder.adjustSellIn()
+                        .andThen(functionBuilder.adjustQualityForExpiredItem()));
 
-            items[i] = composedFunction.apply(items[i]);
-        }
+        List<Item> foo = Arrays.stream(items)
+                .map(item -> composedFunction.apply(item.get()))
+                .collect(Collectors.toList());
+
+        items = foo.stream()
+                .map(item -> new ItemWrapper(item))
+                .collect(Collectors.toList())
+                .toArray(new ItemWrapper[0]);
     }
 
 }

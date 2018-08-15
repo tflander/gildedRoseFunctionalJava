@@ -19,12 +19,12 @@ public class FunctionBuilder {
         return firstMatchingTransform(conditionalTransforms);
     }
 
-    public Function<Item, Item> adjustSellIn(String itemName) {
+    public Function<Item, Item> adjustSellIn() {
 
-        if (isLegendary(itemName)) {
-            return Function.identity();
-        }
-        return decrementSellIn();
+        Map<Predicate<Item>, Function<Item, Item>> conditionalTransforms = new LinkedHashMap<>();
+        conditionalTransforms.put(isLegendary(), Function.identity());
+        conditionalTransforms.put(item -> true, decrementSellIn());
+        return firstMatchingTransform(conditionalTransforms);
     }
 
     public Function<Item, Item> adjustQualityForExpiredItem() {
