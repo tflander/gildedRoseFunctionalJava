@@ -1,7 +1,6 @@
 package com.gildedrose;
 
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 public class AgeItemFunctionBuilder {
 
@@ -23,7 +22,7 @@ public class AgeItemFunctionBuilder {
 
     private Function<Item, Item> decreaseQualityIfExpired() {
         return item -> {
-            if (isExpired().test(item)) {
+            if (item.sellIn < 0) {
                 return decreaseQualityByAmountToZero(1).apply(item);
             } else {
                 return item;
@@ -32,9 +31,7 @@ public class AgeItemFunctionBuilder {
     }
 
     private Function<Item, Item> decrementSellIn() {
-        return item -> {
-            return item.builder().withSellIn(item.sellIn - 1).build();
-        };
+        return item -> item.builder().withSellIn(item.sellIn - 1).build();
     }
 
     private Function<Item, Item> increaseQualityByOneToMax() {
@@ -78,10 +75,6 @@ public class AgeItemFunctionBuilder {
             int quality = Math.max(0, item.quality - amount);
             return item.builder().withQuality(quality).build();
         };
-    }
-
-    private Predicate<Item> isExpired() {
-        return item -> item.sellIn < 0;
     }
 
 }
