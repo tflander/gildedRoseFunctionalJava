@@ -6,11 +6,11 @@ public class ItemWrapper {
 
     private final Item item;
     private final Function<Item, Item> getAgedItem;
-    private static final AgeItemFunctionFactory AGE_ITEM_FUNCTION_BUILDER = new AgeItemFunctionFactory();
+    private static final AgeItemFunctionFactory AGE_ITEM_FUNCTION_FACTORY = new AgeItemFunctionFactory();
 
     public ItemWrapper(Item item) {
         this.item = item;
-        getAgedItem = AGE_ITEM_FUNCTION_BUILDER.build(item);
+        getAgedItem = AGE_ITEM_FUNCTION_FACTORY.build(item);
     }
 
     public Item get() {

@@ -7,8 +7,9 @@ import java.util.function.Function;
 public class AgeItemFunctionFactory {
 
     private static final Map<String, Function<Item, Item>> ageFunctionsByItemName = new HashMap<>();
+
     static {
-        ageFunctionsByItemName.put("Sulfuras, Hand of Ragnaros", Function.identity());
+        ageFunctionsByItemName.put("Sulfuras, Hand of Ragnaros", item -> item);
         ageFunctionsByItemName.put("Aged Brie", increaseQualityByOneToMax().andThen(decrementSellIn()));
         ageFunctionsByItemName.put("Backstage passes to a TAFKAL80ETC concert", handleQualityForBackstagePass().andThen(decrementSellIn()));
         ageFunctionsByItemName.put("Conjured", decreaseQualityByAmountToZero(2).andThen(decrementSellIn()));
