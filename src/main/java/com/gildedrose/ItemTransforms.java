@@ -4,31 +4,29 @@ import java.util.function.Function;
 
 public interface ItemTransforms {
 
-    static Function<Item, Item> decreaseQualityIfExpired() {
-        return item -> {
+    Function<Item, Item> decreaseQualityIfExpired =
+        item -> {
             if (item.sellIn < 0) {
                 return decreaseQualityByAmountToZero(1).apply(item);
             } else {
                 return item;
             }
         };
-    }
 
-    static Function<Item, Item> decrementSellIn() {
-        return item -> item.builder().withSellIn(item.sellIn - 1).build();
-    }
+    Function<Item, Item> decrementSellIn =
+        item -> item.builder().withSellIn(item.sellIn - 1).build();
 
-    static Function<Item, Item> increaseQualityByOneToMax() {
-        return item -> {
+
+    Function<Item, Item> increaseQualityByOneToMax =
+        item -> {
             if (item.quality >= 50) {
                 return item;
             }
             return item.builder().withQuality(item.quality + 1).build();
         };
-    }
 
-    static Function<Item, Item> handleQualityForBackstagePass() {
-        return item -> {
+    Function<Item, Item> handleQualityForBackstagePass =
+         item -> {
             if (item.sellIn <= 0) {
                 return item.builder().withQuality(0).build();
             }
@@ -49,13 +47,9 @@ public interface ItemTransforms {
             return newItem;
 
         };
-    }
 
     static Function<Item, Item> decreaseQualityByAmountToZero(int amount) {
         return item -> {
-            if (item.quality <= 0) {
-                return item;
-            }
             int quality = Math.max(0, item.quality - amount);
             return item.builder().withQuality(quality).build();
         };
