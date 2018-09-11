@@ -99,8 +99,6 @@ public class GildedRoseTest {
                 .thenExpectSellIn(2).andExpectQuality(3);
     }
 
-    // TODO: test quality not less than 0
-
     private TestDsl givenItem() {
         return new TestDsl();
     }
